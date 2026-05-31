@@ -38,11 +38,31 @@
   users.users.ashutosh = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" ]; # Enable ‘sudo’ for the user.
+    shell = pkgs.zsh;
     packages = with pkgs; [
       tree
     ];
   };
 
+  fonts.packages = with pkgs; [
+    nerd-fonts.fira-code
+  ];
+
+  # Audio stack: PipeWire as the server, ALSA for kernel drivers (incl. 32-bit
+  # support for Steam/Wine), PulseAudio shim so legacy apps that talk pulse work.
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = false;
+    pulse.enable = true;
+  };
+
+  # Remap CapsLock -> Ctrl system-wide (covers ly login + virtual consoles).
+  # Hyprland's own kb_options mirrors this for the graphical session.
+  services.xserver.xkb.options = "ctrl:nocaps";
+  console.useXkbConfig = true;
+
+  programs.zsh.enable = true;
   programs.firefox.enable = true;
   programs.hyprland = {
 	enable = true;
