@@ -4,6 +4,23 @@
 	home.username = "ashutosh";
 	home.homeDirectory = "/home/ashutosh";
 	home.stateVersion = "26.05";
+	programs.git = {
+		enable = true;
+		userName = "Ashutosh";
+		userEmail = "starcdwivedi@gmail.com";
+		delta = {
+			enable = true;
+			options = {
+				navigate = true;
+				line-numbers = true;
+			};
+		};
+		extraConfig = {
+			init.defaultBranch = "main";
+			pull.ff = "only";
+			push.autoSetupRemote = true;
+		};
+	};
 	programs.gh = {
 		enable = true;
 		settings = {
@@ -27,10 +44,22 @@
 		syntaxHighlighting.enable = true;
 		enableCompletion = true;
 		history.size = 10000;
+		# Keep /run/wrappers/bin ahead of /run/current-system/sw/bin so the
+		# setuid sudo wrapper resolves first (NixOS zsh init re-prepends profile
+		# paths after wrappers, demoting them otherwise).
+		envExtra = ''
+			export PATH="/run/wrappers/bin:$PATH"
+		'';
 		shellAliases = {
 			cls = "clear";
 			ll = "eza --icons -l";
 			la = "eza --icons -la";
+			nrs = "sudo nixos-rebuild switch --flake ~/nixos-dotfiles#daltrax";
+			gck = "git checkout";
+			gph = "git push";
+			gpl = "git pull";
+			gfa = "git fetch --all";
+			gst = "git status";
 		};
 		profileExtra = ''
 			if [ -z "$WAYLAND_DISPLAY" ] && [ "$XDG_VTNR" = 1 ] && ! pgrep -x ly >/dev/null; then
