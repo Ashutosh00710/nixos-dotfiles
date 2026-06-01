@@ -1,9 +1,11 @@
 { config, pkgs, ... }:
 
+# Cross-platform user configuration. Anything here must work on both NixOS
+# and macOS (when this repo grows a darwin entry). OS-specific additions
+# live in home/linux.nix and a future home/darwin.nix.
 {
-	home.username = "ashutosh";
-	home.homeDirectory = "/home/ashutosh";
 	home.stateVersion = "26.05";
+
 	programs.git = {
 		enable = true;
 		userName = "Ashutosh";
@@ -21,66 +23,49 @@
 			push.autoSetupRemote = true;
 		};
 	};
+
 	programs.gh = {
 		enable = true;
 		settings = {
 			git_protocol = "ssh";
 		};
 	};
-	programs.bash = {
-		enable = true;
-		shellAliases = {
-			cls = "clear";
-		};
-		profileExtra = ''
-			if [ -z "$WAYLAND_DISPLAY" ] && [ "$XDG_VTNR" = 1 ] && ! pgrep -x ly >/dev/null; then
-				exec uwsm start hyprland-uwsm.desktop
-			fi
-		'';
-	};
+
 	programs.zsh = {
 		enable = true;
 		autosuggestion.enable = true;
 		syntaxHighlighting.enable = true;
 		enableCompletion = true;
 		history.size = 10000;
-		# Keep /run/wrappers/bin ahead of /run/current-system/sw/bin so the
-		# setuid sudo wrapper resolves first (NixOS zsh init re-prepends profile
-		# paths after wrappers, demoting them otherwise).
-		envExtra = ''
-			export PATH="/run/wrappers/bin:$PATH"
-		'';
 		shellAliases = {
 			cls = "clear";
 			ll = "eza --icons -l";
 			la = "eza --icons -la";
-			nrs = "sudo nixos-rebuild switch --flake ~/nixos-dotfiles#daltrax";
 			gck = "git checkout";
 			gph = "git push";
 			gpl = "git pull";
 			gfa = "git fetch --all";
 			gst = "git status";
 		};
-		profileExtra = ''
-			if [ -z "$WAYLAND_DISPLAY" ] && [ "$XDG_VTNR" = 1 ] && ! pgrep -x ly >/dev/null; then
-				exec uwsm start hyprland-uwsm.desktop
-			fi
-		'';
 	};
+
 	programs.eza = {
 		enable = true;
 		enableZshIntegration = true;
 		icons = "auto";
 		git = true;
 	};
+
 	programs.fzf = {
 		enable = true;
 		enableZshIntegration = true;
 	};
+
 	programs.zoxide = {
 		enable = true;
 		enableZshIntegration = true;
 	};
+
 	programs.ghostty = {
 		enable = true;
 		settings = {
@@ -88,6 +73,7 @@
 			font-size = 12;
 		};
 	};
+
 	programs.starship = {
 		enable = true;
 		enableZshIntegration = true;
@@ -146,6 +132,4 @@
 			python.symbol = " ";
 		};
 	};
-	home.file.".config/hypr".source = ./config/hypr;
-	home.file.".config/waybar".source = ./config/waybar;
 }

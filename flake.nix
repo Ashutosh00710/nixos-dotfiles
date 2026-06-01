@@ -12,17 +12,17 @@
 		nixosConfigurations.daltrax = nixpkgs.lib.nixosSystem {
 			system = "x86_64-linux";
 			modules = [
-				./configuration.nix
+				./hosts/daltrax
 				home-manager.nixosModules.home-manager
 				{
 					home-manager = {
 						useGlobalPkgs = true;
 						useUserPackages = true;
-						users.ashutosh = import ./home.nix;
+						users.ashutosh = import ./home/linux.nix;
 						backupFileExtension = "backup";
 					};
 				}
-			];	
+			];
 		};
 	};
 }
