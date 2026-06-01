@@ -98,7 +98,6 @@
 			};
 
 			git_branch = {
-				symbol = " ";
 				style = "bold purple";
 			};
 
@@ -123,15 +122,9 @@
 			};
 
 			nix_shell = {
-				symbol = " ";
 				format = " [$symbol$state(\\($name\\))]($style)";
 				style = "bold blue";
 			};
-
-			rust.symbol = " ";
-			golang.symbol = " ";
-			nodejs.symbol = " ";
-			python.symbol = " ";
 		};
 	};
 }
