@@ -12,6 +12,7 @@ Personal NixOS configuration. Hyprland on Wayland, managed declaratively with Ni
 | Shell | Zsh + autosuggestion + syntax highlighting |
 | Prompt | Starship |
 | Tooling | eza, fzf, zoxide, gh |
+| Git | git + delta (top-down diff with line numbers) |
 | Bar | Waybar |
 | Launcher | Wofi |
 | Terminal | Ghostty / Kitty |
@@ -27,13 +28,20 @@ Personal NixOS configuration. Hyprland on Wayland, managed declaratively with Ni
 .
 ├── flake.nix                  # Flake entry point + inputs
 ├── flake.lock
-├── configuration.nix          # System-level NixOS config
-├── hardware-configuration.nix # Machine-specific, generated
-├── home.nix                   # home-manager (user-level) config
-└── config/
+├── hosts/                     # Per-machine system config
+│   └── daltrax/
+│       ├── default.nix        # System-level NixOS config for this host
+│       └── hardware-configuration.nix
+├── home/                      # home-manager (user-level) config
+│   ├── default.nix            # Cross-platform baseline (zsh, git, gh, eza, ...)
+│   └── linux.nix              # Linux-only additions, imports default
+└── config/                    # Raw config files sourced via home.file
     ├── hypr/                  # Hyprland config
     └── waybar/                # Waybar config + styles
 ```
+
+The split lets the same `home/default.nix` get reused later from a Mac
+(via standalone home-manager) by importing it from a sibling `darwin.nix`.
 
 ## Usage
 
@@ -51,4 +59,5 @@ Replace `daltrax` with whatever you name your host in `flake.nix` under `nixosCo
 - Tailscale SSH is enabled — run `sudo tailscale up --ssh` once after install to authenticate.
 - `CapsLock` is remapped to `Ctrl` system-wide (Hyprland + virtual consoles + ly login).
 - Laptop stays awake when the lid is closed (assumes the machine is always on AC).
-- Default user is `ashutosh`. Rename in `configuration.nix` and `home.nix` for your own use.
+- Default user is `ashutosh`. Rename in `hosts/daltrax/default.nix` and `home/linux.nix` for your own use.
+- Convenience alias `nrs` rebuilds the system: `sudo nixos-rebuild switch --flake ~/nixos-dotfiles#daltrax`.
