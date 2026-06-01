@@ -8,19 +8,21 @@
 
 	programs.git = {
 		enable = true;
-		userName = "Ashutosh";
-		userEmail = "starcdwivedi@gmail.com";
-		delta = {
-			enable = true;
-			options = {
-				navigate = true;
-				line-numbers = true;
-			};
-		};
-		extraConfig = {
+		settings = {
+			user.name = "Ashutosh";
+			user.email = "starcdwivedi@gmail.com";
 			init.defaultBranch = "main";
 			pull.ff = "only";
 			push.autoSetupRemote = true;
+		};
+	};
+
+	programs.delta = {
+		enable = true;
+		enableGitIntegration = true;
+		options = {
+			navigate = true;
+			line-numbers = true;
 		};
 	};
 
