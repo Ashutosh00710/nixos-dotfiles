@@ -6,6 +6,11 @@
 {
 	home.stateVersion = "26.05";
 
+	home.packages = with pkgs; [
+		bat
+		btop
+	];
+
 	programs.git = {
 		enable = true;
 		settings = {
@@ -48,6 +53,7 @@
 			gpl = "git pull";
 			gfa = "git fetch --all";
 			gst = "git status";
+			cat = "bat";
 		};
 	};
 
