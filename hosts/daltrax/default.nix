@@ -85,8 +85,13 @@
     kitty
     tailscale
     neovim
+    brightnessctl
     claude-code
   ];
+
+  # Load brightnessctl's udev rules so members of the `video` group can write
+  # to /sys/class/backlight/*/brightness without sudo.
+  services.udev.packages = [ pkgs.brightnessctl ];
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
   nixpkgs.config.allowUnfreePredicate = pkg:

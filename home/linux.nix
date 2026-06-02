@@ -40,4 +40,10 @@
 
 	home.file.".config/hypr".source = ../config/hypr;
 	home.file.".config/waybar".source = ../config/waybar;
+
+	# On-screen display for volume / brightness / caps-lock state. Used by the
+	# swayosd-client invocations bound to media keys in hyprland.conf — the
+	# daemon both performs the action (via wpctl / brightnessctl) and shows
+	# the OSD bar.
+	services.swayosd.enable = true;
 }
