@@ -35,6 +35,13 @@
   networking.networkmanager.wifi.powersave = false;
   systemd.services.NetworkManager-wait-online.enable = true;
 
+  # Bluetooth: enable the stack and power the adapter on at boot.
+  # Manage devices interactively via `bluetuith` (TUI, like nmtui for BT).
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+  };
+
   users.users.ashutosh = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" ]; # Enable ‘sudo’ for the user.
@@ -86,6 +93,7 @@
     tailscale
     neovim
     brightnessctl
+    bluetuith
     claude-code
   ];
 

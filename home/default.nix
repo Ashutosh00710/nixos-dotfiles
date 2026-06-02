@@ -9,6 +9,7 @@
 	home.packages = with pkgs; [
 		bat
 		btop
+		fastfetch
 	];
 
 	programs.git = {
@@ -44,6 +45,9 @@
 		syntaxHighlighting.enable = true;
 		enableCompletion = true;
 		history.size = 10000;
+		initContent = ''
+			fastfetch
+		'';
 		shellAliases = {
 			cls = "clear";
 			ll = "eza --icons -l";
