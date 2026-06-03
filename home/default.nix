@@ -12,6 +12,12 @@
 		fastfetch
 	];
 
+	# Globally-installed npm CLIs (npm i -g ...) land under ~/.npm-global so
+	# they never need root. Set the prefix here instead of a hand-written
+	# ~/.npmrc, and put its bin dir on PATH so the tools (nx, etc.) resolve.
+	home.sessionVariables.NPM_CONFIG_PREFIX = "${config.home.homeDirectory}/.npm-global";
+	home.sessionPath = [ "$HOME/.npm-global/bin" ];
+
 	programs.git = {
 		enable = true;
 		settings = {

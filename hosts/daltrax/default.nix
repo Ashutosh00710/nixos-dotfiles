@@ -82,7 +82,11 @@
     git
     wget
     eza
-    rustup
+    gcc            # provides cc/ld — needed by cargo to link Rust crates
+    pkg-config     # most native-binding crates use it to find system libs
+    cargo
+    rustc
+    rust-analyzer
     go
     nodejs
     ghostty
@@ -95,6 +99,7 @@
     brightnessctl
     bluetuith
     claude-code
+    pstree
   ];
 
   # Load brightnessctl's udev rules so members of the `video` group can write
