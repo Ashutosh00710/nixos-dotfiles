@@ -2,8 +2,9 @@
 
 {
   imports =
-    [       
+    [
 	./hardware-configuration.nix
+	../../modules/nixos/rust.nix
     ];
 
   boot.loader.systemd-boot.enable = true;
@@ -82,11 +83,6 @@
     git
     wget
     eza
-    gcc            # provides cc/ld — needed by cargo to link Rust crates
-    pkg-config     # most native-binding crates use it to find system libs
-    cargo
-    rustc
-    rust-analyzer
     go
     nodejs
     ghostty
@@ -107,6 +103,17 @@
   services.udev.packages = [ pkgs.brightnessctl ];
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
+  # Weekly nix store maintenance: GC anything older than 14 days (keeps a
+  # couple of rollback points) and hardlink-dedupe identical files.
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 14d";
+  };
+  nix.optimise = {
+    automatic = true;
+    dates = [ "weekly" ];
+  };
   nixpkgs.config.allowUnfreePredicate = pkg:
     builtins.elem (lib.getName pkg) [ "claude-code" ];
   services.openssh.enable = false;

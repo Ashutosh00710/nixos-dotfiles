@@ -45,6 +45,14 @@
 		};
 	};
 
+	# direnv + nix-direnv: auto-load per-project nix devShells when you cd into
+	# a directory with `.envrc` containing `use flake`. Drop the manual
+	# `nix develop` invocation entirely. Cross-platform (works on macOS too).
+	programs.direnv = {
+		enable = true;
+		nix-direnv.enable = true;
+	};
+
 	programs.zsh = {
 		enable = true;
 		autosuggestion.enable = true;
