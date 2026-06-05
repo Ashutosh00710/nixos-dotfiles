@@ -36,6 +36,23 @@
   networking.networkmanager.wifi.powersave = false;
   systemd.services.NetworkManager-wait-online.enable = true;
 
+  # Compile-time memory valve. A single rustc can exceed 4 GiB while this
+  # machine has 7.7 GiB and previously zero swap — when RAM ran out the kernel
+  # evicted running programs' executable pages instead of swapping, which froze
+  # the desktop. Fix: zram (compressed, in-RAM, fast) as primary swap, plus an
+  # 8 GiB disk swapfile as a hard backstop for spikes beyond RAM. High
+  # swappiness tells the kernel to push anonymous pages (rustc's heap) to zram
+  # rather than evicting file-backed code pages — that's what stops the freeze.
+  zramSwap = {
+    enable = true;
+    memoryPercent = 50;
+  };
+  swapDevices = [{
+    device = "/var/lib/swapfile";
+    size = 8 * 1024; # MiB -> 8 GiB
+  }];
+  boot.kernel.sysctl."vm.swappiness" = 100;
+
   # Bluetooth: enable the stack and power the adapter on at boot.
   # Manage devices interactively via `bluetuith` (TUI, like nmtui for BT).
   hardware.bluetooth = {
