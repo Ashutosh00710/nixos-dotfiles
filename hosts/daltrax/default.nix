@@ -108,7 +108,10 @@
     hyprpaper
     kitty
     tailscale
-    neovim
+    grim          # wayland screenshot capture
+    slurp         # region selector (feeds grim/grimblast)
+    wl-clipboard  # wl-copy/wl-paste (clipboard for screenshots)
+    grimblast     # hyprland screenshot wrapper (copy/save/area/window)
     brightnessctl
     bluetuith
     claude-code

@@ -10,7 +10,27 @@
 		bat
 		btop
 		fastfetch
+		neovim
+		(callPackage ../pkgs/gogcli.nix { })  # `gog` — Google Workspace CLI, latest release binary
+		# yazi deps: cross-platform
+		fd             # file finding (yazi's file search)
+		ripgrep        # content searching inside yazi
+		jq             # JSON preview
+		p7zip          # archive preview/extraction (provides 7zz)
+		resvg          # SVG preview
+		imagemagick    # HEIC / JPEG XL / font preview
+		wl-clipboard   # clipboard (wl-copy/wl-paste) — Linux Wayland
 	];
+
+	# LazyVim config lives in this repo at config/nvim. Symlinked OUT of the
+	# nix store (mkOutOfStoreSymlink) rather than copied in, because lazy.nvim
+	# writes back to its own dir (lazy-lock.json on `:Lazy update`) and edits
+	# should be live without a rebuild. Resolves on both Linux and macOS as
+	# long as the repo is cloned at ~/nixos-dotfiles. lazy-lock.json is
+	# committed, so plugin versions stay pinned across machines.
+	xdg.configFile."nvim".source =
+		config.lib.file.mkOutOfStoreSymlink
+			"${config.home.homeDirectory}/nixos-dotfiles/config/nvim";
 
 	# Globally-installed npm CLIs (npm i -g ...) land under ~/.npm-global so
 	# they never need root. Set the prefix here instead of a hand-written
@@ -59,6 +79,17 @@
 		syntaxHighlighting.enable = true;
 		enableCompletion = true;
 		history.size = 10000;
+		# Secrets are read from out-of-store files at startup so the values never
+		# land in /nix/store (world-readable) or git. Create the file once:
+		#   mkdir -p ~/.config/gog
+		#   printf '%s' 'your-password' > ~/.config/gog/keyring-password
+		#   chmod 600 ~/.config/gog/keyring-password
+		# Goes in .zshenv (envExtra) so it's set for every zsh, including the
+		# non-interactive shells gog may be invoked from.
+		envExtra = ''
+			[ -r "$HOME/.config/gog/keyring-password" ] && \
+				export GOG_KEYRING_PASSWORD="$(< "$HOME/.config/gog/keyring-password")"
+		'';
 		initContent = ''
 			fastfetch
 		'';
@@ -148,6 +179,38 @@
 			nix_shell = {
 				format = " [$symbol$state(\\($name\\))]($style)";
 				style = "bold blue";
+			};
+		};
+	};
+
+	# yazi: terminal file manager. Shell wrapper `y` auto-changes the working
+	# directory on exit (so `cd` to where you navigated). All preview deps
+	# (fd, ripgrep, jq, p7zip, resvg, imagemagick) are declared in
+	# home.packages above. Video thumbnails (ffmpegthumbnailer) are Linux-only
+	# and declared in home/linux.nix.
+	programs.yazi = {
+		enable = true;
+		enableZshIntegration = true;   # `y` wrapper changes CWD on exit
+		settings = {
+			manager = {
+				show_hidden = false;
+				sort_by = "natural";
+				sort_sensitive = false;
+				sort_reverse = false;
+				sort_dir_first = true;
+				linemode = "size";
+				show_symlink = true;
+			};
+			preview = {
+				image_filter = "lanczos3";
+				image_quality = 90;
+				tab_size = 2;
+				max_width = 600;
+				max_height = 900;
+			};
+			opener = {
+				# Open common file types with sensible defaults
+				edit = [{ run = "nvim \"$@\""; block = true; }];
 			};
 		};
 	};
