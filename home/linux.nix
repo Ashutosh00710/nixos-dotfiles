@@ -41,6 +41,12 @@
 	home.file.".config/hypr".source = ../config/hypr;
 	home.file.".config/waybar".source = ../config/waybar;
 
+	# yazi Linux-only preview deps
+	home.packages = with pkgs; [
+		ffmpegthumbnailer   # video thumbnail generation
+		poppler-utils       # PDF preview (provides pdftotext/pdftoppm)
+	];
+
 	# Global cargo config (Linux-only). Fixes for a low-RAM machine:
 	#   1. Link via clang -> wild instead of the default bfd linker. wild is
 	#      fast and memory-frugal. (wild + clang come from modules/nixos/rust.nix.)
