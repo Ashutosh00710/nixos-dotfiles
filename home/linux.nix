@@ -73,4 +73,21 @@
 	# daemon both performs the action (via wpctl / brightnessctl) and shows
 	# the OSD bar.
 	services.swayosd.enable = true;
+
+	# Second, userspace-only tailscaled joined to the Aftershoot tailnet. No TUN
+	# device, routes or DNS changes — the system tailscaled (personal tailnet,
+	# used for SSH) is untouched. Only processes pointed at its HTTP proxy on
+	# 127.0.0.1:1055 use it (the OpenClaw aftershoot MCP bridge). Login and
+	# --shields-up are one-time `tailscale --socket=… up` prefs persisted in the
+	# state dir (~/.local/state/tailscale-work).
+	systemd.user.services.tailscale-work = {
+		Unit.Description = "Tailscale (Aftershoot tailnet, userspace proxy)";
+		Service = {
+			ExecStart = "${pkgs.tailscale}/bin/tailscaled --tun=userspace-networking --statedir=%S/tailscale-work --socket=%S/tailscale-work/tailscaled.sock --outbound-http-proxy-listen=127.0.0.1:1055 --port=0";
+			StateDirectory = "tailscale-work";
+			Restart = "on-failure";
+			RestartSec = 5;
+		};
+		Install.WantedBy = [ "default.target" ];
+	};
 }
