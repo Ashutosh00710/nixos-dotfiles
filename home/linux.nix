@@ -90,4 +90,34 @@
 		};
 		Install.WantedBy = [ "default.target" ];
 	};
+
+	# Laya decision-model server: the local judge the OpenClaw slack-gate plugin
+	# asks "should the bot reply to this?". Localhost only (laya-serve binds
+	# 0.0.0.0 by default), CPU, English checkpoint only — it holds ~2.9 GB RSS, so
+	# it is capped below the point where it could squeeze out Rust builds. Weights
+	# come from the Hugging Face cache (offline); the first download needs one
+	# manual `laya "test" --predict` with network if ~/.cache/huggingface is wiped.
+	systemd.user.services.laya = {
+		Unit.Description = "Laya decision model server (slack-gate judge)";
+		Service = {
+			ExecStart = "${pkgs.callPackage ../pkgs/laya.nix { }}/bin/laya-serve";
+			Environment = [
+				"LAYA_HOST=127.0.0.1"
+				"LAYA_PORT=8765"
+				"LAYA_DEVICE=cpu"
+				"LAYA_MODELS=english"
+				"LAYA_DEFAULT_MODEL=english"
+				"LAYA_MAX_LOADED=1"
+				"LAYA_PRELOAD=1"
+				"LAYA_THREADS=4"
+				"OMP_NUM_THREADS=4"
+				"LAYA_LOG_LEVEL=warning"
+				"HF_HUB_OFFLINE=1"
+			];
+			MemoryMax = "3500M";
+			Restart = "on-failure";
+			RestartSec = 10;
+		};
+		Install.WantedBy = [ "default.target" ];
+	};
 }
