@@ -114,6 +114,7 @@
     grimblast     # hyprland screenshot wrapper (copy/save/area/window)
     brightnessctl
     bluetuith
+    usbutils      # lsusb / usb-devices
     claude-code
     pstree
   ];
