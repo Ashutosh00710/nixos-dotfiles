@@ -115,9 +115,37 @@
 				"HF_HUB_OFFLINE=1"
 			];
 			MemoryMax = "3500M";
-			Restart = "on-failure";
+			# always, not on-failure: a stray SIGTERM counts as a clean exit and would
+			# otherwise leave the judge down (slack-gate then ignores untagged messages).
+			Restart = "always";
 			RestartSec = 10;
 		};
 		Install.WantedBy = [ "default.target" ];
+	};
+
+	# MCP keep-alive: every 4h, briefly start each OAuth mcp-remote bridge from
+	# OpenClaw's config so its tokens get refreshed, and have the OpenClaw Slack
+	# bot DM me (with re-sign-in steps) when one needs an interactive login.
+	# State (to avoid repeat alerts) lives in ~/.local/state/mcp-keepalive.
+	systemd.user.services.mcp-keepalive = {
+		Unit = {
+			Description = "Refresh OpenClaw MCP OAuth tokens and alert on Slack when re-auth is needed";
+			After = [ "tailscale-work.service" "network-online.target" ];
+			Wants = [ "tailscale-work.service" ];
+		};
+		Service = {
+			Type = "oneshot";
+			ExecStart = "${pkgs.nodejs}/bin/node ${../config/mcp-keepalive/keepalive.mjs}";
+			TimeoutStartSec = "10min";
+		};
+	};
+	systemd.user.timers.mcp-keepalive = {
+		Unit.Description = "Run MCP keep-alive every 4 hours";
+		Timer = {
+			OnBootSec = "10min";
+			OnUnitActiveSec = "4h";
+			Persistent = true;
+		};
+		Install.WantedBy = [ "timers.target" ];
 	};
 }
